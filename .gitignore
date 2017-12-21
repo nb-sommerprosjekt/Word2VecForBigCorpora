@@ -1,0 +1,8 @@
+*.txt
+*.bin
+__pycache__/*
+.idea*
+venv/*
+
+
+
