@@ -36,18 +36,38 @@ class word2vec ():
             model.train(tekst.tokenizedText, total_examples= model.corpus_count, epochs= 30)
             model.save(self.pathToWord2vec)
             print("Ferdig!!!")
-
+    def new_buildWord2Vec(self):
+        corpus = []
+        path_file = open("/disk1/aw_experiments/Word2VecForBigCorpora/paths.txt",w)
+        path_file.write(self.textPaths)
+        path_file.close()
+        for path in self.textPaths:
+            with open(path,'r') as f:
+                temp_text = f.read()
+                tekst = text()
+                tekst.getText(textString = temp_text)
+                tekst.cleanText()
+                corpus.append(tekst.tokenizedText)
+        model = gensim.models.Word2Vec(iter=2)
+        print("modell initialisert")
+        model.build_vocab(corpus)
+        print("vocabulary initialized")
+        model.train(corpus, total_examples = model.corpus_count)
+        print("print training done")  
 class text ():
 
     def __init__(self):
         self.text = "None"
         self.tokenizedText = []
         self.cleanText = None
-
-    def getText(self, textPath):
-        with open(textPath,'r') as text_file:
-            data = text_file.read().replace('\n',' ')
-        self.text = data
+       
+    def getText(self, textPath= None, textString = None):
+        if textPath is not None:
+            with open(textPath,'r') as text_file:
+                data = text_file.read().replace('\n',' ')
+            self.text = data
+        if textString is not None:
+            self.text = textString.replace('\n', ' ')
 
     def tokenize_text(self):
         self.tokenizedText = word_tokenize(self.text)
@@ -85,7 +105,8 @@ class text ():
 
 if __name__ == '__main__':
 
-    word2vec = word2vec("/home/ubuntu/PycharmProjects/word2Vecforbigcorpora/test_data/test3"
-                        ,'/home/ubuntu/PycharmProjects/word2Vecforbigcorpora/test3')
+    word2vec = word2vec("/disk1/aw_experiments/aw_avisText"
+                        ,'/disk1/aw_experiments/Word2VecForBigCorpora/w2v_model')
     word2vec.getTextPaths()
-    word2vec.buildWord2vec()
+    word2vec.new_buildWord2vec()
+    
